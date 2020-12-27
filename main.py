@@ -4,7 +4,7 @@ from settings import TOKEN
 import discord
 from loguru import logger
 
-__version__ = '0.0.2'
+__version__ = '0.2.0'
 
 logger.add('DEBUG.log', format='{time} {level} {message}',
            level='DEBUG', rotation='8 MB', compression='zip', enqueue=True, backtrace=True, diagnose=True)
