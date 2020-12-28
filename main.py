@@ -5,10 +5,10 @@ import discord
 from loguru import logger
 from settings import TOKEN
 
-__version__ = '0.2.1'
+__version__ = '0.3.0'
 
 logger.add('DEBUG.log', format='{time} {level} {message}',
-           level='DEBUG', rotation='1 day', compression='zip', encoding='utf-8')
+           level='DEBUG', rotation='10 KB', compression='zip', encoding='utf-8')
 
 client = discord.Client()
 
@@ -64,6 +64,19 @@ async def on_message(message) -> None:
             str(message.author.mention) + ': ' + normal_message
         await editon_message.edit(content=end_message)
         logger.info('End message: ' + end_message)
+
+    # Command manual
+    if message.content.startswith('!manual'):
+        manual = discord.Embed(
+            title='Bot manual',
+            description='''!manual - displays the manual for the bot
+            !type - Encrypts the message for a while
+            !echo - repeats the message
+            !hello - greets the caller''')
+        manual.set_author(name='RIDERIUS', url='https://github.com/riderius',
+                          icon_url='https://cdn.discordapp.com/avatars/518031210644242433/81e47876e62fac858786b893bdd3c5b9.png?size=1024')
+        await message.channel.send(embed=manual)
+        logger.info('Manual print by: ' + str(message.author))
 
 
 @logger.catch
