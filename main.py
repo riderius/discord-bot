@@ -5,10 +5,10 @@ import discord
 from loguru import logger
 from settings import TOKEN
 
-__version__ = '0.2.0'
+__version__ = '0.2.1'
 
 logger.add('DEBUG.log', format='{time} {level} {message}',
-           level='DEBUG', rotation='8 MB', compression='zip')
+           level='DEBUG', rotation='1 day', compression='zip', encoding='utf-8')
 
 client = discord.Client()
 
@@ -36,6 +36,7 @@ async def on_message(message) -> None:
 
     # Command echo
     if message.content.startswith('!echo'):
+        await message.delete()
         await message.channel.send(message.content.replace('!echo ', ''))
         logger.info('Echo print by: ' + str(message.author) +
                     '\n Sended echo message: ' + message.content.replace('!echo', ''))
