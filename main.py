@@ -1,14 +1,15 @@
 """Main file the discord bot"""
 
+import sys
 import asyncio
 import discord
 from loguru import logger
 from settings import TOKEN
 
-__version__ = '0.3.0'
+__version__ = '0.3.1'
 
 logger.add('DEBUG.log', format='{time} {level} {message}',
-           level='DEBUG', rotation='10 KB', compression='zip', encoding='utf-8')
+           level='DEBUG', rotation='8 MB', compression='zip', encoding='utf-8')
 
 client = discord.Client()
 
@@ -83,7 +84,9 @@ async def on_message(message) -> None:
 def main() -> None:
     """Main function in the discord bot"""
 
-    logger.info('Version: ' + __version__)
+    logger.info('Version bot: ' + __version__)
+    logger.info('OS: ' + sys.platform)
+    logger.info('Python version: ' + sys.version)
     logger.info('Version dircord.py: ' + discord.__version__)
     client.run(TOKEN)
 
