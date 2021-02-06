@@ -6,7 +6,7 @@ import discord
 from loguru import logger
 from settings import TOKEN
 
-__version__ = '0.3.1'
+__version__ = '0.4.0'
 
 logger.add('DEBUG.log', format='{time} {level} {message}',
            level='DEBUG', rotation='8 MB', compression='zip', encoding='utf-8')
@@ -20,6 +20,7 @@ async def on_ready() -> None:
     """This function log about connected account"""
 
     logger.info('We have logged in as {0.user}'.format(client))
+    await client.change_presence(status=discord.Status.online, activity=discord.Game("!manual"))
 
 
 @logger.catch
@@ -78,7 +79,6 @@ async def on_message(message) -> None:
                           icon_url='https://cdn.discordapp.com/avatars/518031210644242433/81e47876e62fac858786b893bdd3c5b9.png?size=1024')
         await message.channel.send(embed=manual)
         logger.info('Manual print by: ' + str(message.author))
-
 
 @logger.catch
 def main() -> None:
