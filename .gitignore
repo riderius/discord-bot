@@ -138,3 +138,6 @@ dmypy.json
 # Sphinx documentation
 docs/build
 source/_build/
+
+# databases
+.db
