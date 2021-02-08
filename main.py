@@ -3,6 +3,7 @@
 import sys
 import asyncio
 import discord
+import sqlite3 as sql
 from loguru import logger
 from settings import TOKEN
 
@@ -12,6 +13,37 @@ logger.add('DEBUG.log', format='{time} {level} {message}',
            level='DEBUG', rotation='8 MB', compression='zip', encoding='utf-8')
 
 client = discord.Client()
+
+
+@logger.catch
+def database(id, time_in_voice):
+
+    connection = sql.connect('database.db')
+
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute('CREATE TABLE stocks (id TEXT, time_in_voice REAL)')
+    except:
+        pass
+
+    data = (round(10/60, 1), 518031210644242433)
+
+    cursor.execute("Update stocks set time_in_voice = ? where id = ?", data)
+
+    # accound_id = input('Enter the account id: ')
+    # time_in_voice = input('Enter the time in voice: ')
+
+    # cursor.execute(f"INSERT INTO stocks VALUES ('{accound_id}','{time_in_voice}')")
+
+    connection.commit()
+
+    cursor.execute("SELECT * FROM `stocks`")
+    rows = cursor.fetchall()
+    for row in rows:
+        print(row[0], row[1])
+
+    connection.close()
 
 
 @logger.catch
@@ -80,6 +112,7 @@ async def on_message(message) -> None:
         await message.channel.send(embed=manual)
         logger.info('Manual print by: ' + str(message.author))
 
+
 @logger.catch
 def main() -> None:
     """Main function in the discord bot"""
@@ -88,6 +121,7 @@ def main() -> None:
     logger.info('OS: ' + sys.platform)
     logger.info('Python version: ' + sys.version)
     logger.info('Version dircord.py: ' + discord.__version__)
+    logger.info('Version sqlite3: ' + sql.sqlite_version)
     client.run(TOKEN)
 
 
