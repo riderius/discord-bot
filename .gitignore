@@ -140,4 +140,4 @@ docs/build
 source/_build/
 
 # databases
-.db
+*.db
