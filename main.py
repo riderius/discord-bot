@@ -7,16 +7,19 @@ import sqlite3 as sql
 from loguru import logger
 from settings import TOKEN
 
-__version__ = '0.4.0'
+__version__ = '0.5-dev2'
+__author__ = 'RIDERIUS'
 
 logger.add('DEBUG.log', format='{time} {level} {message}',
            level='DEBUG', rotation='8 MB', compression='zip', encoding='utf-8')
 
 client = discord.Client()
+intents = discord.Intents()
+intents.members = True
 
 
 @logger.catch
-def database(id, time_in_voice):
+def database(accound_id: int, time_in_voice: float):
 
     connection = sql.connect('database.db')
 
@@ -27,14 +30,40 @@ def database(id, time_in_voice):
     except:
         pass
 
-    data = (round(10/60, 1), 518031210644242433)
+    data = (round(10/60, 1), accound_id)
 
     cursor.execute("Update stocks set time_in_voice = ? where id = ?", data)
 
     # accound_id = input('Enter the account id: ')
     # time_in_voice = input('Enter the time in voice: ')
 
-    # cursor.execute(f"INSERT INTO stocks VALUES ('{accound_id}','{time_in_voice}')")
+    cursor.execute(
+        f"INSERT INTO stocks VALUES ('{accound_id}','{time_in_voice}')")
+
+    connection.commit()
+
+    cursor.execute("SELECT * FROM `stocks`")
+    rows = cursor.fetchall()
+    for row in rows:
+        print(row[0], row[1])
+
+    connection.close()
+
+
+@logger.catch
+@client.event
+async def on_member_join(member):
+
+    connection = sql.connect('database.db')
+
+    cursor = connection.cursor()
+
+    try:
+        cursor.execute('CREATE TABLE stocks (id TEXT, time_in_voice REAL)')
+    except:
+        pass
+
+    cursor.execute(f"INSERT INTO stocks VALUES ('{member.id}','0.0')")
 
     connection.commit()
 
@@ -52,7 +81,7 @@ async def on_ready() -> None:
     """This function log about connected account"""
 
     logger.info('We have logged in as {0.user}'.format(client))
-    await client.change_presence(status=discord.Status.online, activity=discord.Game("!manual"))
+    await client.change_presence(status=discord.Status.online, activity=discord.Game("!manual | v" + __version__))
 
 
 @logger.catch
@@ -63,8 +92,8 @@ async def on_message(message) -> None:
     if message.author == client.user:
         return
 
-    # Command hello
-    if message.content.startswith('!hello'):
+    # Command hello or hi
+    if message.content.startswith('!hello') or message.content.startswith('!hi'):
         await message.channel.send('Hello, ' + str(message.author.mention) + '!')
         logger.info('Hello print by: ' + str(message.author))
 
@@ -99,6 +128,14 @@ async def on_message(message) -> None:
         await editon_message.edit(content=end_message)
         logger.info('End message: ' + end_message)
 
+    # Command voice
+    if message.content.startswith('!voice'):
+        user_id = message.author.id
+        user = await client.fetch_user(user_id)
+        # user = <class 'discord.user.User'>
+        logger.info('Voice print by: ' + str(message.author))
+        # database(user_id, 0.0)
+
     # Command manual
     if message.content.startswith('!manual'):
         manual = discord.Embed(
@@ -106,7 +143,7 @@ async def on_message(message) -> None:
             description='''!manual - displays the manual for the bot
             !type - Encrypts the message for a while
             !echo - repeats the message
-            !hello - greets the caller''')
+            !hello | !hi - greets the caller''')
         manual.set_author(name='RIDERIUS', url='https://github.com/riderius',
                           icon_url='https://cdn.discordapp.com/avatars/518031210644242433/81e47876e62fac858786b893bdd3c5b9.png?size=1024')
         await message.channel.send(embed=manual)
