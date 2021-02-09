@@ -1,14 +1,14 @@
 # Discord bot
 
-This is reository my discord bot.
+This is repository my discord bot.
 
 ## Install
 
 First, you have to install python3, pip3 and git.
 
-Second, you must clone the SGbR repository using the command:
+Second, you must clone the discord bot repository using the command:
 
-> git clone https://github.com/RIDERIUS/Discord_bot.git
+> git clone https://github.com/RIDERIUS/discord-bot.git
 
 Third, you need to install the modules that the bot depends on. This can be done with this command:
 
