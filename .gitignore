@@ -141,3 +141,8 @@ source/_build/
 
 # databases
 *.db
+
+#Sourcetrail files
+*.srctrlprj
+*.srctrldb
+*.srctrlbm
