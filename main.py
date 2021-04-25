@@ -4,13 +4,14 @@ import sys
 import os
 import discord
 from discord.ext import commands
-from settings import TOKEN
 from loguru import logger
+from settings import TOKEN
 
-__version__ = "0.6"
+__version__ = "0.6.1"
 
 # pylint settings:
 # pylint: disable=C0301
+# pylint: disable=E1101
 
 logger.add(
     "DEBUG.log",
@@ -42,7 +43,7 @@ async def on_ready():
 async def manual(ctx):
     """!manual - displays the manual for the bot"""
     author = ctx.message.author
-    manual = discord.Embed(
+    manual_as_an_embed = discord.Embed(
         title="Bot manual",
         description="""!manual - displays the manual for the bot
         !echo - repeats the message
@@ -51,12 +52,12 @@ async def manual(ctx):
         !kick - for kick user
         !ban - for ban user""",
     )
-    manual.set_author(
+    manual_as_an_embed.set_author(
         name="RIDERIUS",
         url="https://github.com/riderius",
         icon_url="https://cdn.discordapp.com/avatars/518031210644242433/81e47876e62fac858786b893bdd3c5b9.png",
     )
-    await ctx.send(embed=manual)
+    await ctx.send(embed=manual_as_an_embed)
     logger.info("!Manual print by: " + str(author))
 
 
@@ -86,7 +87,7 @@ async def echo(ctx, *arg):
 @commands.has_permissions(administrator=True)
 async def clear(ctx, amount=0):
     """!clear [arg] - deletes messages, replace [arg] with the number of messages to delete."""
-    logger.info(f"amount = {amount}")
+    logger.info(f"!clear print by: {ctx.message.author}\namount = {amount}")
     if amount == 0:
         await ctx.send(
             "Add an argument to the command. The argument is the number of messages to delete. Example command: !Clear 5. The example demonstrates a command that will delete 5 messages."
@@ -101,7 +102,9 @@ async def kick(ctx, member: discord.Member, *, reason=None):
     """!kick - for kick user"""
     await member.kick(reason=reason)
     await ctx.send(f"Kick user {member.mention}. Reason {reason}")
-    logger.info(f"User kicked {member.mention}\nReason: {reason} \n!kick print by: {ctx.message.author}")
+    logger.info(
+        f"User kicked {member.mention}\nReason: {reason} \n!kick print by: {ctx.message.author}"
+    )
 
 
 @client.command(pass_context=True)
@@ -110,7 +113,9 @@ async def ban(ctx, member: discord.Member, *, reason=None):
     """!ban - for ban user"""
     await member.ban(reason=reason)
     await ctx.send(f"Ban user {member.mention}. Reason {reason}")
-    logger.info(f"User banned {member.mention}\nReason: {reason} \n!ban print by: {ctx.message.author}")
+    logger.info(
+        f"User banned {member.mention}\nReason: {reason} \n!ban print by: {ctx.message.author}"
+    )
 
 
 @logger.catch
