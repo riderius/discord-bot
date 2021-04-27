@@ -5,9 +5,9 @@ import os
 import discord
 from discord.ext import commands
 from loguru import logger
-from settings import TOKEN
+from settings import DEFAULT_ROLE, TOKEN
 
-__version__ = "0.6.1"
+__version__ = "0.7.0"
 
 # pylint settings:
 # pylint: disable=C0301
@@ -36,6 +36,15 @@ async def on_ready():
         status=discord.Status.online,
         activity=discord.Game(f"!manual | v{__version__} | https://discord.gg/CvswN4t"),
     )
+
+
+@logger.catch
+@client.event
+async def on_member_join(member):
+    """This feature is only triggered if a member joins the server"""
+    role = discord.utils.get(member.guild.roles, id=int(DEFAULT_ROLE))
+    await member.add_roles(role)
+    logger.info(f"{member} joined to server! Role: {role.id}")
 
 
 @logger.catch

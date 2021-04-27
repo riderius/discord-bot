@@ -1,3 +1,4 @@
 """This is file of settings"""
 
-TOKEN = ''
+TOKEN = ""
+DEFAULT_ROLE = ""
